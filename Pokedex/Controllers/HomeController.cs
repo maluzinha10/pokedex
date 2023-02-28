@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Text.Json;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Pokedex.Models;
 
@@ -12,26 +13,17 @@ public class HomeController : Controller
     {
         _logger = logger;
     }
-
     public IActionResult Index()
     {
-        Pokemon bulbasur = new();
-        bulbasur.Numero = 1;
-        bulbasur.Nome = "Bulbasur";
-        bulbasur.Tipo.Add("Planta");
-        bulbasur.Tipo.Add("Venenoso");
-        bulbasur.Imagem =  "\\img\\pokemons\\001.png";
-
-        var ivysaur = new Pokemon()
+        string arquivo = @"Data\pokemon.json";
+        using (StreamReader leitor = new StreamReader(arquivo))
         {
-        Numero = 1,
-        Nome = "Ivysaur",
-        Tipo ={"Planta", "Venenoso"},
-        Imagem =  "\\img\\pokemons\\002.png"
-        };
-        return View(bulbasur);
+            string dados =leitor.ReadToEnd();
+            var pokemons = JsonSerializer.Deserialize<List<Pokemon>>(dados);
+            return View(pokemons);
+        }
+       
     }
-
     public IActionResult Privacy()
     {
         return View();
